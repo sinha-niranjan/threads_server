@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import connectDB from "./db/connectDB.js";
 import cookieParser from "cookie-parser";
 import userRoutes from "./routes/userRoutes.js";
-import postRoutes from "./routes/postRoutes.js"
+import postRoutes from "./routes/postRoutes.js";
 dotenv.config();
 
 await connectDB();
@@ -17,7 +17,7 @@ app.use(cookieParser());
 
 // Routes
 app.use("/api/users", userRoutes);
-app.use("/api/post",postRoutes)
+app.use("/api/post", postRoutes);
 
 app.get("/", (_, res) => {
   res.send({ message: "heelo" });
