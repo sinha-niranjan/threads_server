@@ -9,7 +9,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "https://example.com/api/$1"
+      "dest": "https://threads-server-sinha-niranjan.vercel.app"
     }
   ]
 }
