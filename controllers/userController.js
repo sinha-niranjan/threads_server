@@ -38,7 +38,7 @@ const signupUser = async (req, res) => {
     });
 
     if (user) {
-      return res.status(400).json({ message: "User already exists" });
+      return res.status(400).json({ error: "User already exists" });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -63,7 +63,7 @@ const signupUser = async (req, res) => {
         username: newUser.username,
       });
     } else {
-      return res.status(400).json({ message: "Invalid user data" });
+      return res.status(400).json({ error: "Invalid user data" });
     }
   } catch (error) {
     res.status(500).json({
@@ -81,11 +81,11 @@ const loginUser = async (req, res) => {
     const user = await User.findOne({ username: username });
 
     if (!user) {
-      return res.status(400).json({ message: "Invalid username or password" });
+      return res.status(400).json({ error: "Invalid username or password" });
     }
     const isPasswordCorrect = await bcrypt.compare(password, user?.password);
     if (!isPasswordCorrect) {
-      return res.status(400).json({ message: "Invalid username or password" });
+      return res.status(400).json({ error: "Invalid username or password" });
     }
 
     generateTokenAndSetCookie(user._id, res);
@@ -110,7 +110,7 @@ const logoutUser = async (req, res) => {
   try {
     res.cookie("jwt", "", { maxAge: 1 });
     res.status(200).json({
-      message: "Successfully logged out",
+      error: "Successfully logged out",
     });
   } catch (error) {
     res.status(500).json({
@@ -131,11 +131,11 @@ const followUnFollowUser = async (req, res) => {
     if (id == req.user._id.toString()) {
       return res
         .status(400)
-        .json({ message: "You cannot follow/unfollow yourself" });
+        .json({ error: "You cannot follow/unfollow yourself" });
     }
 
     if (!userToModify || !currentUser) {
-      return res.status(400).json({ message: "User not found" });
+      return res.status(400).json({ error: "User not found" });
     }
 
     const isFollowing = currentUser.followings.includes(id);
@@ -170,13 +170,13 @@ const updateUser = async (req, res) => {
     let user = await User.findById(userId);
 
     if (!user) {
-      return res.status(400).json({ message: "User not found" });
+      return res.status(400).json({ error: "User not found" });
     }
 
     if (req.params.id !== userId.toString()) {
       return res
         .status(400)
-        .json({ message: "You are not authorized to update this user" });
+        .json({ error: "You are not authorized to update this user" });
     }
 
     if (password) {
