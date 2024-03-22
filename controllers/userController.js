@@ -14,7 +14,7 @@ const getUserProfile = async (req, res) => {
       .select("-updatedAt");
 
     if (!user) {
-      return res.status(400).json({ message: "User not found" });
+      return res.status(400).json({ error: "User not found" });
     }
 
     return res.status(200).json({
