@@ -111,6 +111,11 @@ const deletePost = async (req, res) => {
       });
     }
 
+    if (post?.img) {
+      const imgId = post.img.split("/").pop().split(".")[0];
+      await cloudinary.uploader.destroy(imgId);
+    }
+
     await Post.findByIdAndDelete(id);
     res.status(200).json({
       message: "Post deleted successfully",
