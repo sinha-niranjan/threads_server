@@ -248,6 +248,39 @@ const getFeedPosts = async (req, res) => {
   }
 };
 
+// getUserPosts ----------------------------------------------------------------------
+
+const getUserPosts = async (req, res) => {
+  try {
+    const { username } = req.params;
+
+    if (!username) {
+      return res.status(400).json({
+        error: "username is required",
+      });
+    }
+
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      return res.status(404).json({
+        error: "User not found",
+      });
+    }
+
+    const posts = await Post.find({ postedBy: user._id }).sort({
+      createdAt: -1,
+    });
+
+    res.status(200).json(posts);
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+    });
+    console.log("Erorr in getUserPosts", error.message);
+  }
+};
+
 export {
   createPost,
   getPost,
@@ -255,4 +288,5 @@ export {
   likeUnlikePost,
   replyToPost,
   getFeedPosts,
+  getUserPosts,
 };
