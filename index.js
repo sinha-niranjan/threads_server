@@ -19,7 +19,7 @@ cloudinary.config({
 });
 
 // Middlewares
-app.use(express.json({ limit: "50mb" })); // To parse JSON data in the req.body
+app.use(express.json({ limit: "50mb" })); // To parse JSON data in the req.body and limits 40mb shows that now it can get upto 40 mb in the req.body it more than previous now there is no issue to get any iamges of large size
 app.use(express.urlencoded({ extended: true })); // To parse form data in the req.body
 app.use(cookieParser());
 
