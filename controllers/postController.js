@@ -207,10 +207,7 @@ const replyToPost = async (req, res) => {
 
     await post.save();
 
-    res.status(201).json({
-      message: "Reply created successfully",
-      post,
-    });
+    res.status(201).json(reply);
   } catch (error) {
     res.status(500).json({
       error: error.message,
