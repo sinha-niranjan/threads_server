@@ -2,15 +2,16 @@ import Conversation from "../models/conversationModel.js";
 import Message from "../models/messageModel.js";
 import { getRecipientSocketId } from "../socket/socket.js";
 import { io } from "../socket/socket.js";
+import { v2 as cloudinary } from "cloudinary";
 
 // sendMessage  ----------------------------------------------------------------
 
 const sendMessage = async (req, res) => {
   try {
     const { recipientId, message } = req.body;
+    let { img } = req.body;
     const senderId = req.user._id;
-
-    if (!recipientId || !message) {
+    if (!recipientId || (!message && !img)) {
       res.status(400).json({
         error: "Please provider a recipient and message",
       });
@@ -33,10 +34,16 @@ const sendMessage = async (req, res) => {
       await conversation.save();
     }
 
+    if (img) {
+      const uploadedResponse = await cloudinary.uploader.upload(img);
+      img = uploadedResponse.secure_url;
+    }
+
     const newMessage = new Message({
       conversationId: conversation._id,
       sender: senderId,
       text: message,
+      img: img || "",
     });
 
     await Promise.all([
