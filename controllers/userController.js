@@ -99,9 +99,15 @@ const loginUser = async (req, res) => {
     if (!user) {
       return res.status(400).json({ error: "Invalid username or password" });
     }
+
     const isPasswordCorrect = await bcrypt.compare(password, user?.password);
     if (!isPasswordCorrect) {
       return res.status(400).json({ error: "Invalid username or password" });
+    }
+
+    if (user.isFrozen) {
+      user.isFrozen = false;
+      await user.save();
     }
 
     generateTokenAndSetCookie(user._id, res);
@@ -285,6 +291,33 @@ const getSuggestedUsers = async (req, res) => {
     res.status(500).json({
       error: error.message,
     });
+    console.log("Error in getSuggestedUsers : " + error.message);
+  }
+};
+
+// freezeAccount --------------------------------------------------------------
+
+const freezeAccount = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(400).json({ error: "User not found" });
+    }
+
+    user.isFrozen = true;
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+    });
+    console.log("Error in freezeAccount : " + error.message);
   }
 };
 
@@ -296,4 +329,5 @@ export {
   updateUser,
   getUserProfile,
   getSuggestedUsers,
+  freezeAccount,
 };
